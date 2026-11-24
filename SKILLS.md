@@ -45,13 +45,45 @@ npx skills update -p -y                                   # update every pinned 
 python3 -I .claude/skills/ofs-studio/scripts/build_index.py   # rebuild the router index
 ```
 
-## CLIs some skills need
+## Cloud environment
 
-Installed per container (cloud containers start fresh, so these belong in the environment's setup script):
+Run OFS sessions on the `openingframestudios-01` cloud environment. Cloud containers start fresh, and its setup script installs the CLIs below in each new one. The `Default` environment has no setup script and blocks every host in the table, so a session that starts there has none of this.
+
+| Allowed host | Needed for |
+|---|---|
+| `www.reddit.com`, `arctic-shift.photon-reddit.com` | last30days Reddit |
+| `hn.algolia.com` | last30days Hacker News |
+| `gamma-api.polymarket.com` | last30days Polymarket |
+| `www.youtube.com` | last30days YouTube, through yt-dlp |
+| `www.modelscope.cn`, `cdn-lfs-cn-1.modelscope.cn` | rea-video OCR models for `--ocr-lang en`, `ja` and `ko` (the first redirects downloads to the second) |
+
+GitHub, npm and PyPI work without being listed. Every other site stays blocked, so agent-browser can only reach these hosts; use Firecrawl for anything else.
+
+If a session starts on `Default`, move it with `switch_environment` and install the CLIs by hand. A switch changes only the network: the setup script runs only when a fresh container starts.
+
+### CLIs some skills need
 
 - `agent-browser` (`npm i -g agent-browser`). Skip `agent-browser install` in the cloud container: its Chrome download is blocked there, and agent-browser already uses the container's Chromium through `CHROME_PATH`
 - `yt-dlp` and `rea-video` (`uv tool install yt-dlp`, `uv tool install "rea-video[ocr] @ git+https://github.com/JuneYaooo/rea-video"`)
 - `graphify` (`uv tool install graphifyy`)
+
+### Known gaps
+
+- rea-video's face model download gets a 403 from github.com even though GitHub is allowed, so face detection falls back to OpenCV's older Haar detector.
+- Without the two ModelScope hosts, `rea-video --ocr-lang en` finds no on-screen text yet still reports success. The default OCR model ships inside the package and reads English too.
+- rea-video has no vision model configured, so it tells live action, AI and 3D apart from pixel statistics alone. `rea-video review` lets Claude look at the frames instead, with no key needed.
+- last30days covers TikTok and Instagram only through its keyless yt-dlp fallback, which finds less, and X is off. Turning them on needs keys that cost credits past a free tier, so ask first.
+
+## Setup check (24 Nov 2026)
+
+Checked from a fresh cloud session. The repo checks out: all 847 skills have valid front matter, the index rebuilds with no changes, and every skill the router names exists. Still open on the account side:
+
+- Metricool is signed in, but its brand has no social account, so scheduling, best time to post and analytics have nothing to work with.
+- Windsor sees the `openingframestudios` Instagram account with 0 followers and 0 posts (Windsor `get_data`, 24 Nov 2026). Reconnect it if the account has posts. Windsor is on a trial plan.
+- CreatorBerry is not connected.
+- vidIQ is signed in with no YouTube channel linked. Its Instagram and TikTok research works without one.
+- The marketing plugin's own servers (Ahrefs, Canva, Figma, Notion, Slack and others) can't connect from the container. No OFS pipeline uses them.
+- The OFS skills show in the skill list by name only: the plugins load about 190 skills, which uses up the description budget. The router names each OFS skill, so only automatic triggering suffers. `SLASH_COMMAND_TOOL_CHAR_BUDGET` raises the budget (untested).
 
 ## Security review (24 Nov 2026)
 
