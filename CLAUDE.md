@@ -13,7 +13,7 @@ OFS makes AI films, reels, ads and key art that look like real footage, mainly f
 ## Where the skills are
 
 - `.claude/skills/`: the shelf, always in the skill list (the router plus a few core skills).
-- `.agents/skills/`: a library of 840 skills from 28 repos, kept out of the skill list so it does not crowd out the OFS skills. Find one through `.claude/skills/ofs-studio/library/INDEX.md`, then Read its `SKILL.md` and follow it.
+- `.agents/skills/`: a library of 840 more skills from the install list, kept out of the skill list so it does not crowd out the OFS skills. Find one through `.claude/skills/ofs-studio/library/INDEX.md`, then Read its `SKILL.md` and follow it.
 - `skills-lock.json` pins every source. See `SKILLS.md` for updating, duplicates and security notes.
 
 ## Rules
