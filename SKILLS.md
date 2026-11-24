@@ -49,7 +49,7 @@ python3 -I .claude/skills/ofs-studio/scripts/build_index.py   # rebuild the rout
 
 Installed per container (cloud containers start fresh, so these belong in the environment's setup script):
 
-- `agent-browser` (`npm i -g agent-browser`), with `AGENT_BROWSER_EXECUTABLE_PATH=/opt/pw-browsers/chromium` in the cloud container (its own Chrome download is blocked there)
+- `agent-browser` (`npm i -g agent-browser`). Skip `agent-browser install` in the cloud container: its Chrome download is blocked there, and agent-browser already uses the container's Chromium through `CHROME_PATH`
 - `yt-dlp` and `rea-video` (`uv tool install yt-dlp`, `uv tool install "rea-video[ocr] @ git+https://github.com/JuneYaooo/rea-video"`)
 - `graphify` (`uv tool install graphifyy`)
 
